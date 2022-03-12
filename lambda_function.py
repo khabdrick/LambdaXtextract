@@ -1,6 +1,16 @@
 import json
 import boto3 # used to get the textract service in our Python code
 
+
+def display_text(response, extract_by):
+    # 
+    line_text = []
+    for block in response["Blocks"]:
+        if block["BlockType"] == extract_by:
+            line_text.append(block["Text"]) # 
+    return line_text
+
+
 def lambda_handler(event, context):
     textract = boto3.client("textract")
     if event: # the event==True when S3 recieves a document
@@ -21,8 +31,6 @@ def lambda_handler(event, context):
         )
         print(json.dumps(response)) # print the extracted data
 
-
-        return {
-            "statusCode": 200,
-            "body": json.dumps("Content extracted successfully!"),
-        }
+        
+        raw_text = display_text(response, extract_by="LINE") # pass response to display_text() so
+        print(raw_text)
