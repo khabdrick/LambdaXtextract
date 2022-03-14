@@ -1,8 +1,4 @@
-import webbrowser, os
-import json
 import boto3
-import io
-from io import BytesIO
 import sys
 from pprint import pprint
 
