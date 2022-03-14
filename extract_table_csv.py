@@ -4,6 +4,7 @@ from pprint import pprint
 
 
 def get_rows_columns_map(table_result, blocks_map):
+    # map 
     rows = {}
     for relationship in table_result['Relationships']:
         if relationship['Type'] == 'CHILD':
@@ -39,29 +40,27 @@ def get_text(result, blocks_map):
 def get_table_csv_results(file_name):
 
     with open(file_name, 'rb') as file:
-        img_test = file.read()
-        bytes_test = bytearray(img_test)
+        image = file.read()
+        image_bytes = bytearray(image) # convert image to array of given bytes
         print('Image loaded', file_name)
 
     # process using image bytes
     # get the results
     client = boto3.client('textract')
 
-    response = client.analyze_document(Document={'Bytes': bytes_test}, FeatureTypes=['TABLES'])
+    response = client.analyze_document(Document={'Bytes': image_bytes}, FeatureTypes=['TABLES'])
 
     # Get the text blocks
     blocks=response['Blocks']
-    pprint(blocks)
+
 
     blocks_map = {}
     table_blocks = []
     for block in blocks:
-        blocks_map[block['Id']] = block
+        blocks_map[block['Id']] = block #map each block to block id
         if block['BlockType'] == "TABLE":
+            # get a list of where "BlockType": "TABLE" so that we can track each content in the table 
             table_blocks.append(block)
-
-    if len(table_blocks) <= 0:
-        return "<b> NO Table FOUND </b>"
 
     csv = ''
     for index, table in enumerate(table_blocks):
